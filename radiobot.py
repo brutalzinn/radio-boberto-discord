@@ -17,8 +17,7 @@ load_dotenv()
 
 TOKEN = os.getenv("DISCORD_RADIOBOT_TOKEN")         # collected from Discord Bot setup process.
 PREFIX = os.getenv("DISCORD_RADIOBOT_PREFIX")       # e.g. "!"
-SOURCE = os.getenv("DISCORD_RADIOBOT_SOURCE")       # e.g. "http://nthmost.net:8000/mutiny-studio"
-ENCODING = "mp3"                                    # options: ogg, mp3  (default: ogg)
+SOURCE = os.getenv("DISCORD_RADIOBOT_SOURCE")       # e.g. "http://nthmost.net:8000/mutiny-studio"                                  # options: ogg, mp3  (default: ogg)
 
 client = Bot(command_prefix=PREFIX)
 player = None
@@ -40,13 +39,13 @@ async def web_listeners(ctx):
 
 
 async def do_play(ctx):
-    global player, volume_config
+    global player
 
     try:
         channel = ctx.message.author.voice.channel
     except AttributeError:
         await ctx.send(f"Você precisa entrar em um canal de voz para eu saber onde reproduzir o stream!")
-        return
+        return 
 
     try:
         player = await channel.connect()
@@ -55,13 +54,12 @@ async def do_play(ctx):
     except Exception as err:
         print(err)
         pass
+    if not ctx.author.voice or not ctx.author.voice.channel:
+        return await ctx.reply('Você não está em um canal de voz.')
     if player:
-        if ENCODING == "mp3":
-            player.play(FFmpegPCMAudio(SOURCE))
-            player.source = PCMVolumeTransformer(player.source)
-            player.source.volume = 1.0
-        else:
-            player.play(FFmpegOpusAudio(SOURCE))
+        player.play(FFmpegPCMAudio(SOURCE))
+        player.source = PCMVolumeTransformer(player.source)
+        player.source.volume = 1.0
     else:
         print("Não foi possível iniciar o player.")
 
@@ -75,19 +73,17 @@ async def play(ctx):
 @client.command(aliases=['s', 'stp','par'])
 async def stop(ctx):
     if player:
-        if not ctx.author.voice or not ctx.author.voice.channel:# Muestra un error si estás conectado a un canal de voz.
+        if not ctx.author.voice or not ctx.author.voice.channel:
             return await ctx.reply('Você não está em um canal de voz.')
         player.stop()
 
 @client.command(aliases=['v', 'vol'])
 async def volume(ctx, *args):
-    global player, volume_config
-
     new_volume = float(args[0])
     if 0 <= new_volume <= 100:
 
         new_volume = new_volume / 100
-        if not ctx.author.voice or not ctx.author.voice.channel:# Muestra un error si estás conectado a un canal de voz.
+        if not ctx.author.voice or not ctx.author.voice.channel:
             return await ctx.reply('Você não está em um canal de voz.')
         source = ctx.guild.voice_client.source
         if not isinstance(source, PCMVolumeTransformer):
