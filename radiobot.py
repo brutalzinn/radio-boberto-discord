@@ -3,8 +3,8 @@ import os
 from discord import FFmpegOpusAudio, FFmpegPCMAudio
 from discord.ext.commands import Bot
 from discord.ext.commands.errors import CommandInvokeError
-
-
+from dotenv import load_dotenv
+load_dotenv()
 # A spot to keep these details handy while you're collecting them...
 # 
 # client id: 
@@ -20,7 +20,7 @@ PREFIX = os.getenv("DISCORD_RADIOBOT_PREFIX")       # e.g. "!"
 SOURCE = os.getenv("DISCORD_RADIOBOT_SOURCE")       # e.g. "http://nthmost.net:8000/mutiny-studio"
 ENCODING = "ogg"                                    # options: ogg, mp3  (default: ogg)
 
-client = Bot(command_prefix=list(PREFIX))
+client = Bot(command_prefix="$")
 
 player = None
 
@@ -30,18 +30,17 @@ async def on_ready():
     print('KSTK Player Ready')
 
 
-@client.command(name="whoami")
+@client.command(name="eu")
 async def whoami(ctx) :
     await ctx.send(f"You are {ctx.message.author.name}")
 
 
-@client.command(name="web_listeners")
+@client.command(name="ouvintes")
 async def web_listeners(ctx):
-    listeners = 5
-    await ctx.send(f"Listeners connected directly to {SOURCE}: {listeners}")
+    await ctx.send(f"Ouvintes conectados em {SOURCE}")
 
 
-async def do_play(src):
+async def do_play(ctx):
     global player
     try:
         channel = ctx.message.author.voice.channel
@@ -59,20 +58,20 @@ async def do_play(src):
         pass
     if player:
         if ENCODING == "mp3":
-            player.play(FFmpegPCMAudio(src))
+            player.play(FFmpegPCMAudio(SOURCE))
         else:
-            player.play(FFmpegOpusAudio(src))
+            player.play(FFmpegOpusAudio(SOURCE))
     else:
         print("Could not initialize player.")
 
 
 
-@client.command(aliases=['p', 'pla'])
+@client.command(aliases=['p', 'pla','toc'])
 async def play(ctx):
-    await do_play(SOURCE)
+    await do_play(ctx)
 
 
-@client.command(aliases=['s', 'stp'])
+@client.command(aliases=['s', 'stp','par'])
 async def stop(ctx):
     await player.stop()
 
