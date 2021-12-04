@@ -88,7 +88,7 @@ async def volume(ctx, *args):
     else:
         await ctx.send('O volume precisa estar entre 0 e 100')
 
-@client.command(aliases=['sai', 'sair', 'exit'])
+@client.command(aliases=['sai', 'exit'])
 async def sair(ctx, *args):
     if not ctx.author.voice or not ctx.author.voice.channel:
         return await ctx.reply('Você não está em um canal de voz.')
