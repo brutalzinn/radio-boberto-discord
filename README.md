@@ -1,7 +1,15 @@
-  # discord-radio-bot
-  # This project is originally created by nthmost
-  ### Check the original github page here: (Click here)[https://github.com/nthmost/discord-radio-bot]
-  ### I used the original project to uses with my Virtual private server.
+# discord-radio-bot
+
+# EN
+* This project is originally created by nthmost
+* Check the original github page here: (Click here)[https://github.com/nthmost/discord-radio-bot]
+* I used the original project to uses with my Virtual private server.
+
+# PT/BR
+
+* Este projeto foi originalmente criado por nthmost
+Verifique a página original do github aqui: (Clique aqui) [https://github.com/nthmost/discord-radio-bot]
+* Usei o projeto original para usar com meu servidor virtual privado.
 
 # RADIO-BOBERTO-DISCORD
 
