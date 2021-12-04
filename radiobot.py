@@ -86,7 +86,8 @@ async def volume(ctx, *args):
         new_volume = float(args[0])
         if 0 <= new_volume <= 100:
                 new_volume = new_volume / 100
-                volume_config = new_volume
+                if player.source:
+                    player.source.volume = volume_config
                 await ctx.send(f"Volume alterado para {args[0]}")
         else:
             await ctx.send('O volume precisa estar entre 0 e 100')
