@@ -83,14 +83,12 @@ async def stop(ctx):
 
 @client.command(aliases=['v', 'vol'])
 async def volume(ctx, *args):
+    global volume_config
     if player:
         new_volume = float(args[0])
         if 0 <= new_volume <= 100:
                 new_volume = new_volume / 100
-                if player.source:
-                    player.source.volume = volume_config
-                else:
-                    await ctx.send(f"Ocorreu um erro ao alterar volume para {args[0]}")
+                volume_config = new_volume
                 await ctx.send(f"Volume alterado para {args[0]}")
         else:
             await ctx.send('O volume precisa estar entre 0 e 100')
