@@ -1,6 +1,6 @@
 import os
 
-from discord import FFmpegOpusAudio, FFmpegPCMAudio
+from discord import FFmpegOpusAudio, FFmpegPCMAudio, PCMVolumeTransformer
 from discord.ext.commands import Bot
 from discord.ext.commands.errors import CommandInvokeError
 from dotenv import load_dotenv
@@ -23,7 +23,7 @@ ENCODING = "ogg"                                    # options: ogg, mp3  (defaul
 client = Bot(command_prefix="$")
 
 player = None
-
+volume = 1.0
 
 @client.event
 async def on_ready():
@@ -61,6 +61,7 @@ async def do_play(ctx):
             player.play(FFmpegPCMAudio(SOURCE))
         else:
             player.play(FFmpegOpusAudio(SOURCE))
+        player.source = PCMVolumeTransformer(player.source, volume)
     else:
         print("Could not initialize player.")
 
@@ -73,7 +74,20 @@ async def play(ctx):
 
 @client.command(aliases=['s', 'stp','par'])
 async def stop(ctx):
-    await player.stop()
+    if player:
+        await player.stop()
+
+@client.command(aliases=['v', 'vol'])
+async def volume(ctx, *args):
+    if player:
+        new_volume = float(args[0])
+        if 0 <= new_volume <= 100:
+                new_volume = new_volume / 100
+                player.source = PCMVolumeTransformer(player.source, new_volume)
+                await ctx.send(f"Alterando volume para {args[0]}")
+        else:
+            await ctx.send('O volume precisa estar entre 0 e 100')
+
 
 
 client.run(TOKEN)
