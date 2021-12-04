@@ -58,13 +58,18 @@ async def do_play(ctx):
         pass
     if player:
         if ENCODING == "mp3":
+           # player.play(FFmpegPCMAudio(SOURCE))
             audio = FFmpegPCMAudio(SOURCE)
+            source = PCMVolumeTransformer(audio)
+            source.volume = volume_config
+            player.play(audio)
         else:
-            audio = FFmpegOpusAudio(SOURCE)
+            #player.play(FFmpegOpusAudio(SOURCE))
+            audio = FFmpegPCMAudio(SOURCE)
+            source = PCMVolumeTransformer(audio)
+            source.volume = volume_config
+            player.play(audio)
 
-        source = PCMVolumeTransformer(audio)
-        source.volume = volume_config
-        player.play(audio)
         #player.source = PCMVolumeTransformer(player.source, volume)
     else:
         print("Could not initialize player.")
@@ -83,7 +88,6 @@ async def stop(ctx):
 
 @client.command(aliases=['v', 'vol'])
 async def volume(ctx, *args):
-    global volume_config
     if player:
         new_volume = float(args[0])
         if 0 <= new_volume <= 100:
