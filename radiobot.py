@@ -57,14 +57,14 @@ async def do_play(ctx):
         print(err)
         pass
     if player:
-        global audio
         if ENCODING == "mp3":
             audio = FFmpegPCMAudio(SOURCE)
         else:
             audio = FFmpegOpusAudio(SOURCE)
+
         source = PCMVolumeTransformer(audio)
         source.volume = volume_config
-
+        player.play(audio)
         #player.source = PCMVolumeTransformer(player.source, volume)
     else:
         print("Could not initialize player.")
