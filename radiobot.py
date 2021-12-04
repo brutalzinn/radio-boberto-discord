@@ -51,6 +51,7 @@ async def do_play(ctx):
 
     try:
         player = await channel.connect()
+        player.source = PCMVolumeTransformer(player.source, volume=volume_config)
     except CommandInvokeError:
         print("Attempt to play without user in channel")
     except Exception as err:
@@ -76,6 +77,8 @@ async def play(ctx):
 @client.command(aliases=['s', 'stp','par'])
 async def stop(ctx):
     if player:
+        if not ctx.author.voice or not ctx.author.voice.channel:# Muestra un error si estás conectado a un canal de voz.
+            return await ctx.reply('Você não está em um canal de voz.')
         player.stop()
 
 @client.command(aliases=['v', 'vol'])
