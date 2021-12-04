@@ -4,7 +4,6 @@ from discord import FFmpegOpusAudio, FFmpegPCMAudio, PCMVolumeTransformer
 from discord.ext.commands import Bot
 from discord.ext.commands.errors import CommandInvokeError
 from dotenv import load_dotenv
-import subprocess
 load_dotenv()
 # A spot to keep these details handy while you're collecting them...
 # 
@@ -59,9 +58,12 @@ async def do_play(ctx):
         pass
     if player:
         if ENCODING == "mp3":
-            player.play(PCMVolumeTransformer(FFmpegPCMAudio(SOURCE,stderr=subprocess.PIPE),volume_config))
+            player.play(FFmpegPCMAudio(SOURCE))
         else:
-            player.play(PCMVolumeTransformer(FFmpegOpusAudio(SOURCE,stderr=subprocess.PIPE),volume_config))
+            player.play(FFmpegOpusAudio(SOURCE))
+        player.source = PCMVolumeTransformer(player.source)
+        player.source.volume = volume_config
+
         #player.source = PCMVolumeTransformer(player.source, volume)
     else:
         print("Could not initialize player.")
@@ -80,7 +82,6 @@ async def stop(ctx):
 
 @client.command(aliases=['v', 'vol'])
 async def volume(ctx, *args):
-    global volume_config
     if player:
         new_volume = float(args[0])
         if 0 <= new_volume <= 100:
