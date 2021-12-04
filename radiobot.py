@@ -23,7 +23,7 @@ ENCODING = "ogg"                                    # options: ogg, mp3  (defaul
 client = Bot(command_prefix="$")
 
 player = None
-volume = 1.0
+volume_config = 1.0
 
 @client.event
 async def on_ready():
@@ -58,10 +58,10 @@ async def do_play(ctx):
         pass
     if player:
         if ENCODING == "mp3":
-            player.play(FFmpegPCMAudio(SOURCE))
+             player.play(PCMVolumeTransformer(FFmpegPCMAudio(SOURCE),volume_config))
         else:
-            player.play(FFmpegOpusAudio(SOURCE))
-        player.source = PCMVolumeTransformer(player.source, volume)
+            player.play(PCMVolumeTransformer(FFmpegOpusAudio(SOURCE),volume_config))
+        #player.source = PCMVolumeTransformer(player.source, volume)
     else:
         print("Could not initialize player.")
 
@@ -75,7 +75,7 @@ async def play(ctx):
 @client.command(aliases=['s', 'stp','par'])
 async def stop(ctx):
     if player:
-        await player.stop()
+        player.stop()
 
 @client.command(aliases=['v', 'vol'])
 async def volume(ctx, *args):
@@ -83,8 +83,8 @@ async def volume(ctx, *args):
         new_volume = float(args[0])
         if 0 <= new_volume <= 100:
                 new_volume = new_volume / 100
-                player.source = PCMVolumeTransformer(player.source, new_volume)
-                await ctx.send(f"Alterando volume para {args[0]}")
+                volume_config = new_volume
+                await ctx.send(f"Volume alterado para {args[0]}")
         else:
             await ctx.send('O volume precisa estar entre 0 e 100')
 
