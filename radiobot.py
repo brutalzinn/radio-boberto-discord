@@ -1,4 +1,5 @@
 import os
+from subprocess import PIPE
 
 from discord import FFmpegOpusAudio, FFmpegPCMAudio, PCMVolumeTransformer
 from discord.ext.commands import Bot
@@ -59,13 +60,13 @@ async def do_play(ctx):
     if player:
         if ENCODING == "mp3":
            # player.play(FFmpegPCMAudio(SOURCE))
-            audio = FFmpegPCMAudio(SOURCE)
+            audio = FFmpegPCMAudio(SOURCE,stderr=PIPE)
             source = PCMVolumeTransformer(audio)
             source.volume = volume_config
             player.play(audio)
         else:
             #player.play(FFmpegOpusAudio(SOURCE))
-            audio = FFmpegPCMAudio(SOURCE)
+            audio = FFmpegPCMAudio(SOURCE,stderr=PIPE)
             source = PCMVolumeTransformer(audio)
             source.volume = volume_config
             player.play(audio)
