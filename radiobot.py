@@ -69,12 +69,12 @@ async def do_play(src):
 
 @client.command(aliases=['p', 'pla'])
 async def play(ctx):
-    do_play(SOURCE)
+    await do_play(SOURCE)
 
 
 @client.command(aliases=['s', 'stp'])
 async def stop(ctx):
-    player.stop()
+    await player.stop()
 
 
 client.run(TOKEN)
