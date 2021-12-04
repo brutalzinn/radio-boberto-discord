@@ -85,16 +85,7 @@ async def volume(ctx, *args):
    
     new_volume = float(args[0])
     if 0 <= new_volume <= 100:
-        try:
-            channel = ctx.message.author.voice.channel
-        except AttributeError:
-            # user is not in a Voice Channel
-            await ctx.send(f"You need to join a Voice Channel for me to know where to play the stream!")
-            return
 
-        
-        player = await channel.connect()
-        
         new_volume = new_volume / 100
         if not ctx.author.voice or not ctx.author.voice.channel:# Muestra un error si estás conectado a un canal de voz.
             return await ctx.reply('Você não está em um canal de voz.')
