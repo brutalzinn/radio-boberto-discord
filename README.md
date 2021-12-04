@@ -1,5 +1,7 @@
 # discord-radio-bot
 
+[![Deploy de produção](https://github.com/brutalzinn/radio-boberto-discord/actions/workflows/master.yml/badge.svg)](https://github.com/brutalzinn/radio-boberto-discord/actions/workflows/master.yml)
+
 # EN
 * This project is originally created by nthmost
 * Check the original github page here: (Click here)[https://github.com/nthmost/discord-radio-bot]
