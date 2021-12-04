@@ -1,0 +1,8 @@
+version: '2'
+services: 
+  discord-radio-bot:
+    build: .
+    container_name: discord-radio-bot
+    restart: always
+    env_file:
+      - .env

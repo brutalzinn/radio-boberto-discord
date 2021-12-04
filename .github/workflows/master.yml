@@ -1,0 +1,76 @@
+name: Deploy de produção
+
+on:
+  push:
+    # Sequence of patterns matched against refs/heads
+    branches:    
+      # Push events on main branch
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+  
+    - name: Copy repository contents via scp
+      uses: appleboy/scp-action@master
+      env:
+        HOST: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        KEY: ${{ secrets.SSHKEY }}
+      with:
+        source: "."
+        target: "/home/brutalzinn/discord/radio-boberto"
+
+    - name: Criando arquivo .env
+      uses: appleboy/ssh-action@master
+      env:
+        DISCORD_RADIOBOT_TOKEN: ${{ secrets.DISCORD_RADIOBOT_TOKEN }}
+        DISCORD_RADIOBOT_SOURCE: ${{ secrets.DISCORD_RADIOBOT_SOURCE }}
+        DISCORD_RADIOBOT_PREFIX: ${{ secrets.DISCORD_RADIOBOT_PREFIX }}
+
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        KEY: ${{ secrets.SSHKEY }}
+        envs: DISCORD_RADIOBOT_TOKEN, DISCORD_RADIOBOT_SOURCE, DISCORD_RADIOBOT_PREFIX
+        script: |
+          sudo rm -f .env
+          echo "DISCORD_RADIOBOT_TOKEN=$DISCORD_RADIOBOT_TOKEN" >/home/brutalzinn/discord/radio-boberto/.env
+          echo "DISCORD_RADIOBOT_SOURCE=$DISCORD_RADIOBOT_SOURCE" >>/home/brutalzinn/discord/radio-boberto/.env
+          echo "DISCORD_RADIOBOT_PREFIX=$DISCORD_RADIOBOT_PREFIX" >>/home/brutalzinn/discord/radio-boberto/.env
+          
+    - name: Executando docker-compose
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        KEY: ${{ secrets.SSHKEY }}
+        script_stop: true
+        script: |
+          cd /home/brutalzinn/discord/radio-boberto
+          docker-compose up --force-recreate >> error.log 2>&1 &
+          
+
+    - name: Disparando notificação no Discord
+      uses: appleboy/ssh-action@master
+      env:
+        DISCORD_URL: ${{ secrets.DISCORD_URL }}
+      with:
+        host: ${{ secrets.HOST }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PORT: ${{ secrets.PORT }}
+        KEY: ${{ secrets.SSHKEY }}
+        envs: DISCORD_URL
+        script: |
+          DATA=$(date '+%d-%m-%Y %H:%M:%S') &&
+          CONTENT="O deploy de >Rádio< radio-boberto foi um sucesso. $DATA" &&
+          curl -X POST -H 'Content-Type: application/json' -d '{"content":"'"$CONTENT"'"}' $DISCORD_URL
+
+    
