@@ -2,7 +2,7 @@ version: '2'
 services: 
   discord-radio-bot:
     build: .
-    container_name: discord-radio-bot
+    container_name: radio-boberto-discord
     restart: always
     env_file:
       - .env
