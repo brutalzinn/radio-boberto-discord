@@ -82,33 +82,33 @@ async def stop(ctx):
 
 @client.command(aliases=['v', 'vol'])
 async def volume(ctx, *args):
-    if player:
-        new_volume = float(args[0])
-        if 0 <= new_volume <= 100:
-            try:
-                channel = ctx.message.author.voice.channel
-            except AttributeError:
-                # user is not in a Voice Channel
-                await ctx.send(f"You need to join a Voice Channel for me to know where to play the stream!")
-                return
+   
+    new_volume = float(args[0])
+    if 0 <= new_volume <= 100:
+        try:
+            channel = ctx.message.author.voice.channel
+        except AttributeError:
+            # user is not in a Voice Channel
+            await ctx.send(f"You need to join a Voice Channel for me to know where to play the stream!")
+            return
 
-           
-            player = await channel.connect()
-            
-            new_volume = new_volume / 100
-            if not ctx.author.voice or not ctx.author.voice.channel:# Muestra un error si estás conectado a un canal de voz.
-                return await ctx.reply('Você não está em um canal de voz.')
-            
-            if not ctx.voice_state.is_playing: # Muestra un error si no se está reproduciendo una música.
-                return await ctx.reply('Nenhuma música tocando.')
-            
-            if ctx.author.voice.channel != ctx.guild.me.voice.channel: # Muestra un error si no está conectado al mismo canal de voz del bot.
-                return await ctx.reply('Você não está conectado a um canal de voz.')
         
-            player.source = PCMVolumeTransformer(player.source, volume=volume_config)
-            await ctx.send(f"Volume alterado para {args[0]}")
-        else:
-            await ctx.send('O volume precisa estar entre 0 e 100')
+        player = await channel.connect()
+        
+        new_volume = new_volume / 100
+        if not ctx.author.voice or not ctx.author.voice.channel:# Muestra un error si estás conectado a un canal de voz.
+            return await ctx.reply('Você não está em um canal de voz.')
+        
+        if not ctx.voice_state.is_playing: # Muestra un error si no se está reproduciendo una música.
+            return await ctx.reply('Nenhuma música tocando.')
+        
+        if ctx.author.voice.channel != ctx.guild.me.voice.channel: # Muestra un error si no está conectado al mismo canal de voz del bot.
+            return await ctx.reply('Você não está conectado a um canal de voz.')
+    
+        player.source = PCMVolumeTransformer(player.source, volume=volume_config)
+        await ctx.send(f"Volume alterado para {args[0]}")
+    else:
+        await ctx.send('O volume precisa estar entre 0 e 100')
 
 
 
