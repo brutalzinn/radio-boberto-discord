@@ -19,7 +19,8 @@ TOKEN = os.getenv("DISCORD_RADIOBOT_TOKEN")         # collected from Discord Bot
 PREFIX = os.getenv("DISCORD_RADIOBOT_PREFIX")       # e.g. "!"
 SOURCE = os.getenv("DISCORD_RADIOBOT_SOURCE")       # e.g. "http://nthmost.net:8000/mutiny-studio"                                  # options: ogg, mp3  (default: ogg)
 
-client = Bot(command_prefix=PREFIX)
+client = Bot(command_prefix=list(PREFIX))
+
 player = None
 volume_config = 1.0
 
