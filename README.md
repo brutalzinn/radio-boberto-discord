@@ -13,7 +13,10 @@
 Verifique a página original do github aqui: (Clique aqui) [https://github.com/nthmost/discord-radio-bot]
 * Usei o projeto original para usar com meu servidor virtual privado.
 
-# RADIO-BOBERTO-DISCORD
+# RADIO-JUKE-DISCORD
+
+![image info](./imagens/juke.png)
+
 
 ## História:
 
