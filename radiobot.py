@@ -57,12 +57,13 @@ async def do_play(ctx):
         print(err)
         pass
     if player:
+        global audio
         if ENCODING == "mp3":
-            player.play(FFmpegPCMAudio(SOURCE))
+            audio = FFmpegPCMAudio(SOURCE)
         else:
-            player.play(FFmpegOpusAudio(SOURCE))
-        player.source = PCMVolumeTransformer(player.source)
-        player.source.volume = volume_config
+            audio = FFmpegOpusAudio(SOURCE)
+        source = PCMVolumeTransformer(audio)
+        source.volume = volume_config
 
         #player.source = PCMVolumeTransformer(player.source, volume)
     else:
@@ -88,6 +89,8 @@ async def volume(ctx, *args):
                 new_volume = new_volume / 100
                 if player.source:
                     player.source.volume = volume_config
+                else:
+                    await ctx.send(f"Ocorreu um erro ao alterar volume para {args[0]}")
                 await ctx.send(f"Volume alterado para {args[0]}")
         else:
             await ctx.send('O volume precisa estar entre 0 e 100')
