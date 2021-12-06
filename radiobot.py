@@ -93,6 +93,7 @@ async def sair(ctx, *args):
         
 @client.command(aliases=['rest', 'rein'])
 async def reiniciar(ctx):
+    await ctx.reply('Ok... você quer me matar, né?! Tudo bem.')
     await ctx.bot.logout()
     await client.run(TOKEN)
 
