@@ -5,19 +5,10 @@ from discord.ext.commands import Bot
 from discord.ext.commands.errors import CommandInvokeError
 from dotenv import load_dotenv
 load_dotenv()
-# A spot to keep these details handy while you're collecting them...
-# 
-# client id: 
-# public key: 
-# client secret: 
-# bot permissions: 66583360
-# TOKEN:
- 
 
-
-TOKEN = os.getenv("DISCORD_RADIOBOT_TOKEN")         # collected from Discord Bot setup process.
-PREFIX = os.getenv("DISCORD_RADIOBOT_PREFIX") + ' '      # e.g. "!"
-SOURCE = os.getenv("DISCORD_RADIOBOT_SOURCE")       # e.g. "http://nthmost.net:8000/mutiny-studio"                                  # options: ogg, mp3  (default: ogg)
+TOKEN = os.getenv("DISCORD_RADIOBOT_TOKEN")
+PREFIX = os.getenv("DISCORD_RADIOBOT_PREFIX") + ' '     
+SOURCE = os.getenv("DISCORD_RADIOBOT_SOURCE")      
 
 client = Bot(command_prefix=PREFIX,description="Eu sou um bot para transmitir músicas por streaming <3")
 
@@ -33,6 +24,8 @@ async def on_ready():
 async def web_listeners(ctx):
     await ctx.send(f"Ouvintes conectados em {SOURCE}")
 
+
+#muito gambiarra isso. Pela amor de deus! Refatorar assim que possível
 async def do_play(ctx):
     global player
 
@@ -45,16 +38,19 @@ async def do_play(ctx):
     try:
         player = await channel.connect()
     except CommandInvokeError:
-        print("Tentando tocar sem nenhum usuário no canal.")
+        await ctx.guild.voice_client.disconnect()
     except Exception as err:
         print(err)
         pass
     if not ctx.author.voice or not ctx.author.voice.channel:
         return await ctx.reply('Você não está em um canal de voz.')
     if player:
-        player.play(FFmpegPCMAudio(SOURCE))
-        player.source = PCMVolumeTransformer(player.source)
-        player.source.volume = 1.0
+        try:
+            player.play(FFmpegPCMAudio(SOURCE))
+            player.source = PCMVolumeTransformer(player.source)
+            player.source.volume = 1.0
+        except:
+            await ctx.guild.voice_client.disconnect()
     else:
         print("Não foi possível iniciar o player.")
 
@@ -95,7 +91,10 @@ async def sair(ctx, *args):
     await ctx.guild.voice_client.disconnect()
     await ctx.reply('Ok... você me excluiu da fofoca :(')
         
-
+@client.command(aliases=['rest', 'rein'])
+async def reiniciar(ctx):
+    await ctx.bot.logout()
+    await client.run(TOKEN)
 
 
 client.run(TOKEN)
